@@ -2,10 +2,10 @@
     "name": "wx-miniporgram-original-plugin",
     "version": "0.0.1",
     "description": "A webpack plugin for wx orginal miniporgram framework",
-    "main": "index.js",
+    "main": "./dist/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev-helper": "tsc  --watch"
+        "dev": "tsc  --watch"
     },
     "husky": {
         "hooks": {

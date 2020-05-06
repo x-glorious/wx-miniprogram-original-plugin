@@ -15,14 +15,13 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "strict": true,
-        "removeComments": true,
+        "removeComments": false,
         "pretty": true,
         "strictPropertyInitialization": true,
         "esModuleInterop": true,
         "lib": ["es5"],
         "declaration": true, // 生成 `.d.ts` 文件
-        "outDir": "./dist", // 编译后生成的文件目录
-        "strict": true // 开启严格的类型检测
+        "outDir": "./dist" // 编译后生成的文件目录
     },
     "include": ["./src/**/*.ts"],
     "exclude": ["./node_modules"]
