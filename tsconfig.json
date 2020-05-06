@@ -9,8 +9,8 @@
         "noImplicitThis": true,
         "noImplicitReturns": true,
         "alwaysStrict": true,
-        "inlineSourceMap": true,
-        "inlineSources": true,
+        "inlineSourceMap": false,
+        "inlineSources": false,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -20,8 +20,9 @@
         "strictPropertyInitialization": true,
         "esModuleInterop": true,
         "lib": ["es5"],
-        "declaration": true, // 生成 `.d.ts` 文件
-        "outDir": "./dist" // 编译后生成的文件目录
+        "declaration": true,
+        "outDir": "./dist",
+        "sourceMap": false
     },
     "include": ["./src/**/*.ts"],
     "exclude": ["./node_modules"]

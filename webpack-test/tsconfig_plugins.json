@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "module": "CommonJS",
+        "target": "ES5",
+        "allowJs": false,
+        "experimentalDecorators": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "alwaysStrict": true,
+        "noFallthroughCasesInSwitch": true,
+        "strict": true,
+        "removeComments": true,
+        "pretty": true,
+        "strictPropertyInitialization": true,
+        "esModuleInterop": true,
+        "lib": ["es5"]
+    },
+    "include": ["./helper/ts/**/*.ts"]
+}

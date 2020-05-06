@@ -32,3 +32,5 @@ export interface IOptions {
         }
     }[]
 }
+
+export default '667'

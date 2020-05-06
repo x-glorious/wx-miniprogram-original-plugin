@@ -9,3 +9,9 @@ dist
 
 # Macos
 .DS_Store
+
+# webpack test
+webpack-test/.temp
+webpack-test/node_modules
+webpack-test/output
+webpack-test/dist
