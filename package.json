@@ -1,0 +1,42 @@
+{
+    "name": "wx-miniporgram-original-plugin",
+    "version": "0.0.1",
+    "description": "A webpack plugin for wx orginal miniporgram framework",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev-helper": "tsc  --watch"
+    },
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ordinaryP/wx-miniporgram-original-plugin.git"
+    },
+    "keywords": [
+        "webpack",
+        "plugin",
+        "wx-miniporgram",
+        "original"
+    ],
+    "author": "ordinaryP",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ordinaryP/wx-miniporgram-original-plugin/issues"
+    },
+    "homepage": "https://github.com/ordinaryP/wx-miniporgram-original-plugin#readme",
+    "devDependencies": {
+        "@commitlint/cli": "^8.3.5",
+        "@commitlint/config-conventional": "^8.3.4",
+        "@types/webpack": "^4.41.12",
+        "@typescript-eslint/eslint-plugin": "^2.31.0",
+        "@typescript-eslint/parser": "^2.31.0",
+        "eslint": "^6.8.0",
+        "husky": "^4.2.5",
+        "prettier": "^2.0.5",
+        "typescript": "^3.8.3"
+    }
+}

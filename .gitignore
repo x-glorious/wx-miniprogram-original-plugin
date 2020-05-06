@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+
+# Output
+dist
+
+# Vscode
+.vscode
+
+# Macos
+.DS_Store
