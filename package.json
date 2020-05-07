@@ -1,11 +1,13 @@
 {
-    "name": "wx-mini-program-original-plugin",
+    "name": "wx-miniprogram-original-plugin",
     "version": "0.0.1",
     "description": "A webpack plugin for wx orginal miniporgram framework",
     "main": "./dist/index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "tsc  --watch --outDir ./webpack-test/dist"
+        "dev": "tsc  --watch --outDir ./webpack-test/dist",
+        "prebuild": "rm -rf ./dist",
+        "build": "tsc"
     },
     "husky": {
         "hooks": {
