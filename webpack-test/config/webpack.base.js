@@ -22,7 +22,8 @@ const wxAppJsonPluginObj = new WxAppJsonPlugin({
         path.resolve(srcDir, 'app.ts'),
         path.resolve(srcDir, 'app.scss'),
         path.resolve(srcDir, 'project.config.map'),
-        path.resolve(srcDir, 'sitemap.map')
+        path.resolve(srcDir, 'sitemap.map'),
+        path.resolve(srcDir, 'test.json')
     ],
     appJsonPath: path.resolve(srcDir, 'app.map'),
     dependencyPairs: [
@@ -130,7 +131,7 @@ module.exports = {
     optimization: {
         // 由于小程序的特殊性，并不需要做额外的分包处理，只把 多余的 webpack runtime 剔除掉
         runtimeChunk: {
-            name: `${rubbishDirName}/runtime`
+            name: `test/${rubbishDirName}/runtime`
         }
     }
 }

@@ -1,36 +1,29 @@
+// import { Compiler } from 'webpack'
 export interface IOptions {
     /**
-     * 文件输出目录
+     * 根目录
      */
-    outputDir: string
+    srcDir: string
     /**
-     * app 设定文件路径
+     * wxss 文件在src源代码中所对应的后缀
      */
-    appSettingFile: string
-    /**
-     * 页面或者组件文件后置列表
-     */
-    pageOrComponentSuffixArray: string[]
-    /**
-     * app 级别的文件列表
-     */
-    appLevelFiles: string[]
+    wxssSrcSuffix: string
     /**
      * 是否使用了 ts
      */
     isUseTs: boolean
-    /**
-     * 依赖信息
-     * 没有在此数组中 出现的文件，则认为是绝对需要
-     */
-    dependencyInfos: {
-        suffix: string
-        importRegex: RegExp
-        aliasInfo: {
-            aliasSymbol: string
-            matchPath: string
-        }
+}
+
+export interface ISystemInfo {
+    outDir: string
+    alias: {
+        symbol: string
+        path: string
     }[]
 }
 
-export default '667'
+export class WxMiniProgramOriginalPlugin {
+    // apply(compiler: Compiler) {
+    //     // compiler.hooks.entryOption.tap()
+    // }
+}

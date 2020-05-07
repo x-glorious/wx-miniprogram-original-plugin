@@ -71,6 +71,8 @@ class WxAppJsonPlugin {
     apply(compiler: Compiler) {
         const { appJsonPath } = this.options
         compiler.hooks.watchRun.tap(WxAppJsonPlugin.NAME, (newCompiler, e) => {
+            // compiler.options.resolve.alias
+            // compiler.options.output.path
             const modifyFiles = (newCompiler as any).watchFileSystem.watcher.mtimes
             let needUpdate = false
             for (const filePath in modifyFiles) {
@@ -92,6 +94,19 @@ class WxAppJsonPlugin {
                 this.updateFakeImport()
                 this.fConsole.info('Update fake importer')
             }
+        })
+
+        compiler.hooks.emit.tap(WxAppJsonPlugin.NAME, (test) => {
+            test.assets['test.json'] = {
+                source: () => {
+                    return `{"test":"666"}`
+                },
+
+                size: () => {
+                    return `{"test":"666"}`.length
+                }
+            }
+            console.log(test)
         })
     }
 

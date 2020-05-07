@@ -68,6 +68,17 @@ var WxAppJsonPlugin = (function () {
                 _this.fConsole.info('Update fake importer');
             }
         });
+        compiler.hooks.emit.tap(WxAppJsonPlugin.NAME, function (test) {
+            test.assets['test.json'] = {
+                source: function () {
+                    return "{\"test\":\"666\"}";
+                },
+                size: function () {
+                    return "{\"test\":\"666\"}".length;
+                }
+            };
+            console.log(test);
+        });
     };
     WxAppJsonPlugin.prototype.oneFileModified = function (absolutePath) {
         this.disposeAnalysisFiles([absolutePath], false);
