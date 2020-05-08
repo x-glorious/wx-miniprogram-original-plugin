@@ -13,7 +13,7 @@
         "inlineSources": false,
         "noFallthroughCasesInSwitch": true,
         // "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        // "noUnusedParameters": true,
         "strict": true,
         "removeComments": false,
         "pretty": true,

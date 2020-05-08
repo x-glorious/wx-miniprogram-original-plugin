@@ -18,7 +18,7 @@ export const getWebpackSystemInfos = (compiler: Compiler): IWebpackSystemInfo =>
 
     for (const keyString in alias) {
         aliasInfos.push({
-            symbol: keyString,
+            symbolString: keyString,
             path: alias[keyString]
         })
     }
@@ -35,9 +35,9 @@ export const getWebpackSystemInfos = (compiler: Compiler): IWebpackSystemInfo =>
  * @param outputDir 输出目录
  * @param pluginDir 插件所在目录（也就是Index.ts所在的目录）
  */
-export const setRuntimeChunk = (compiler: Compiler, outputDir: string, pluginDir: string) => {
-    const runtimeRealPath = Path.resolve(pluginDir, Settings.runtimeChunkRelativePath)
-    const runtimeRelativePath = Path.relative(outputDir, runtimeRealPath)
+export const setRuntimeChunk = (compiler: Compiler, outputDir: string) => {
+    const { runtimeChunkPath } = Settings
+    const runtimeRelativePath = Path.relative(outputDir, runtimeChunkPath)
 
     compiler.options.optimization!.runtimeChunk = {
         name: runtimeRelativePath
@@ -60,12 +60,13 @@ export const getOutput = (outputDir: string) => {
  * @param outputDir 输出目录
  * @param pluginDir 插件所在目录
  */
-export const getEntry = (outputDir: string, pluginDir: string) => {
-    const fakerRealPath = Path.resolve(pluginDir, Settings.fakerImporterRelativePath)
-    const fakerRelativePath = Path.relative(outputDir, fakerRealPath)
+export const getEntry = (outputDir: string) => {
+    const { fakerImporterPath } = Settings
+
+    const fakerRelativePath = Path.relative(outputDir, fakerImporterPath)
 
     return {
-        [fakerRelativePath]: fakerRealPath
+        [fakerRelativePath]: fakerImporterPath
     }
 }
 
@@ -73,18 +74,65 @@ export const getEntry = (outputDir: string, pluginDir: string) => {
  * 创建环境
  * @param pluginDir 插件所在目录
  */
-export const makeEnvironment = (pluginDir: string) => {
-    const { cacheRelativeDir, fakerImporterRelativePath } = Settings
-    const cacheRealPath = Path.resolve(pluginDir, cacheRelativeDir)
-    const fakerImporterRealPath = Path.resolve(pluginDir, fakerImporterRelativePath)
+export const makeEnvironment = () => {
+    const { cacheDir, fakerImporterPath } = Settings
 
     // 确保 缓存目录存在
-    if (!Fs.existsSync(cacheRealPath)) {
-        Fs.mkdirSync(cacheRealPath)
+    if (!Fs.existsSync(cacheDir)) {
+        Fs.mkdirSync(cacheDir)
     }
 
     // 确保 faker importer 存在
-    Fs.writeFileSync(fakerImporterRealPath, '', {
+    Fs.writeFileSync(fakerImporterPath, '', {
         flag: 'w'
     })
+}
+
+/**
+ * 将导入的路径信息转换成真实路径
+ * ps: 会做别名处理（为了支持别名绝对路径）
+ * @param importFilePath 导入文件路径
+ * @param aliasInfos 别名信息
+ */
+export const transformImportPathToRealPath = (importFilePath: string, aliasInfos: IAliasInfo[]) => {
+    let result = importFilePath
+
+    aliasInfos.forEach(({ symbolString, path }) => {
+        if (result.includes(symbolString)) {
+            result = Path.resolve(path, result.replace(symbolString, '.'))
+        }
+    })
+
+    return result
+}
+
+/**
+ * 获取faker导入所需要的相对路径
+ * @param fileAbsolutePath 文件绝对路径
+ */
+export const getFakerImportRelativePath = (fileAbsolutePath: string) => {
+    const { cacheDir } = Settings
+    return Path.relative(cacheDir, fileAbsolutePath)
+}
+
+/**
+ * 转换Import根路径或者相对路径到绝对路径
+ * @param fileAbsolutePath 文件绝对路径
+ * @param importPath import的路径（根路径或者相对路径）
+ * @param srcDir 微信小程序根目录
+ */
+export const transformRootOrRelativeToRealPath = (
+    fileAbsolutePath: string,
+    importPath: string,
+    srcDir: string
+) => {
+    // 根目录
+    if (importPath.startsWith('/')) {
+        return Path.resolve(srcDir, importPath.slice(1))
+    }
+    // 相对路径
+    else {
+        const fileDir = Path.dirname(fileAbsolutePath)
+        return Path.resolve(fileDir, importPath)
+    }
 }

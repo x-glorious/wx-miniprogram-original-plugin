@@ -15,7 +15,7 @@ export interface IFileInfo {
     /**
      * 文件依赖
      */
-    dependencies: string[]
+    dependencies: Set<string>
     /**
      * import时的相对路径
      */
@@ -24,8 +24,18 @@ export interface IFileInfo {
 
 /**
  * 文件分析器类型
+ * @param fileAbsolutePath 文件绝对路径
+ * @param webpackSystemInfo 从webpack中获取的信息
+ * @param options 用户设定的信息
+ * @param additionalDependencies 额外的依赖
+ * @returns 文件依赖信息接口
  */
-export type FileAnalyzer = (fileAbsolutePath: string, aliasInfos: IAliasInfo[]) => IFileInfo
+export type FileAnalyzer = (
+    fileAbsolutePath: string,
+    webpackSystemInfo: IWebpackSystemInfo,
+    options: IOptions,
+    additionalDependencies?: Set<string>
+) => IFileInfo
 
 export interface IOptions {
     /**
@@ -48,7 +58,7 @@ export interface IAliasInfo {
     /**
      * 符号
      */
-    symbol: string
+    symbolString: string
     /**
      * 路径
      */
@@ -67,16 +77,11 @@ export class WxMiniProgramOriginalPlugin {
      */
     private webpackSystemInfo: IWebpackSystemInfo = { srcDir: '', aliasInfos: [] }
     /**
-     * 插件所在目录（也就是Index.ts文件所在目录）
-     */
-    private pluginDir: string
-    /**
      * 插件设置信息
      */
     private options: IOptions
 
     constructor(options: Partial<IOptions>) {
-        this.pluginDir = __dirname
         const { wxssSrcSuffix = 'wxss', isUseTs = false, outputDir } = options
 
         if (!outputDir) {
@@ -89,25 +94,21 @@ export class WxMiniProgramOriginalPlugin {
             outputDir
         }
         // 准备环境
-        makeEnvironment(this.pluginDir)
+        makeEnvironment()
     }
 
     apply(compiler: Compiler) {
         // 获取webpack 系统信息
         this.webpackSystemInfo = getWebpackSystemInfos(compiler)
         // 设置runtime chunk
-        setRuntimeChunk(compiler, this.options.outputDir, this.pluginDir)
-
-        compiler.hooks.emit.tap(WxMiniProgramOriginalPlugin.PLUGIN_NAME, () => {
-            console.log('enter')
-        })
+        setRuntimeChunk(compiler, this.options.outputDir)
     }
 
     /**
      * 获取webpack所需的入口
      */
     public getEntry() {
-        return getEntry(this.options.outputDir, this.pluginDir)
+        return getEntry(this.options.outputDir)
     }
 
     /**
