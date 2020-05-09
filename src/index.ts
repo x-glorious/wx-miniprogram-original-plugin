@@ -7,6 +7,15 @@ import {
     getEntry
 } from './tools'
 
+export enum FileTypeEnum {
+    JS,
+    WXSS,
+    WXML,
+    JSON
+}
+
+export type ExtMap = Map<FileTypeEnum, string[]>
+
 export interface IFileInfo {
     /**
      * 文件绝对路径
@@ -39,15 +48,9 @@ export type FileAnalyzer = (
 
 export interface IOptions {
     /**
-     * wxss 文件在src源代码中所对应的后缀
-     * default wxss
+     * wxss 文件在src源代码中所对应的额外的后缀
      */
-    wxssSrcSuffix: string
-    /**
-     * 是否使用了 ts
-     * default false
-     */
-    isUseTs: boolean
+    additionalWxssSuffixArray: string[]
     /**
      * 输出目录
      */
@@ -82,15 +85,14 @@ export class WxMiniProgramOriginalPlugin {
     private options: IOptions
 
     constructor(options: Partial<IOptions>) {
-        const { wxssSrcSuffix = 'wxss', isUseTs = false, outputDir } = options
+        const { additionalWxssSuffixArray = [], outputDir } = options
 
         if (!outputDir) {
             throw new Error('options outputDir not set')
         }
 
         this.options = {
-            wxssSrcSuffix,
-            isUseTs,
+            additionalWxssSuffixArray,
             outputDir
         }
         // 准备环境

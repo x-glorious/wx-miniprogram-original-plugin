@@ -12,8 +12,8 @@ const analyzer: FileAnalyzer = (
     options,
     additionalDependencies
 ) => {
-    const importRegex = /<import\s+src="([^"]+?)"\s*\/>/g
-    const includeRegex = /<include\s+src="([^"]+?)"\s*\/>/g
+    const importRegex = /<import\s+src="([^\s"]+?)"\s*\/>/g
+    const includeRegex = /<include\s+src="([^\s"]+?)"\s*\/>/g
     const commentRegex = /<!--.*?-->/g
 
     const dependencies = new Set<string>(additionalDependencies ? additionalDependencies : [])

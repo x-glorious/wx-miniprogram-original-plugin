@@ -11,8 +11,8 @@ const analyzer: FileAnalyzer = (
     options,
     additionalDependencies
 ) => {
-    const importRegex = /import\s+[^'"]+\s+from\s+(?:'|")([^'"]+?)(?:'|")/g
-    const requireRegex = /require\((?:'|")([^'"]+?)(?:'|")/g
+    const importRegex = /import\s+[^'"]+\s+from\s+(?:'|")([^\s'"]+?)(?:'|")/g
+    const requireRegex = /require\((?:'|")([^\s'"]+?)(?:'|")/g
     const starCommentRegex = /\/\*(.|\n)*?\*\//g
     const lineCommentRegex = /\/\/.*?\n/g
 
@@ -35,7 +35,7 @@ const analyzer: FileAnalyzer = (
     return {
         absolutePath: fileAbsolutePath,
         dependencies,
-        importPath: getFakerImportRelativePath(fileAbsolutePath)
+        importPath: getFakerImportRelativePath(fileAbsolutePath, false)
     }
 }
 

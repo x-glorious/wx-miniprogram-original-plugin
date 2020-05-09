@@ -2,7 +2,7 @@ import { Compiler } from 'webpack'
 import Path from 'path'
 import Fs from 'fs'
 import Settings from './settings'
-import { IAliasInfo, IWebpackSystemInfo } from './index'
+import { IAliasInfo, IWebpackSystemInfo, FileTypeEnum, ExtMap } from './index'
 
 /**
  * 获取webpack 系统信息
@@ -109,10 +109,19 @@ export const transformImportPathToRealPath = (importFilePath: string, aliasInfos
 /**
  * 获取faker导入所需要的相对路径
  * @param fileAbsolutePath 文件绝对路径
+ * @param preserveExt 是否保留后缀，默认保留
  */
-export const getFakerImportRelativePath = (fileAbsolutePath: string) => {
+export const getFakerImportRelativePath = (fileAbsolutePath: string, preserveExt = true) => {
     const { cacheDir } = Settings
-    return Path.relative(cacheDir, fileAbsolutePath)
+    const result = Path.relative(cacheDir, fileAbsolutePath)
+
+    if (preserveExt) {
+        return result
+    }
+
+    // 不保留文件后缀
+    const dotIndex = result.lastIndexOf('.')
+    return result.slice(0, dotIndex)
 }
 
 /**
@@ -135,4 +144,45 @@ export const transformRootOrRelativeToRealPath = (
         const fileDir = Path.dirname(fileAbsolutePath)
         return Path.resolve(fileDir, importPath)
     }
+}
+
+/**
+ * 获取搜索后缀地图
+ * @param additionalWxssSuffixArray 额外的wxss文件后缀
+ */
+export const getSearchExtInfo = (additionalWxssSuffixArray: string[]) => {
+    const jsArray = ['js', 'ts']
+    const jsonArray = ['json']
+    const wxmlArray = ['wxml']
+    const wxssArray = ['wxss', ...additionalWxssSuffixArray]
+
+    const extMap: ExtMap = new Map([
+        [FileTypeEnum.JS, jsArray],
+        [FileTypeEnum.JSON, jsonArray],
+        [FileTypeEnum.WXML, wxmlArray],
+        [FileTypeEnum.WXSS, wxssArray]
+    ])
+
+    return {
+        extMap,
+        extArray: [jsonArray, jsArray, wxssArray, wxmlArray]
+    }
+}
+
+/**
+ * 获取所属文件类型
+ * @param absoluteFilePath 文件绝对路径
+ * @param expMap 文件后缀地图
+ * @returns undefined 代表文件类型不在已知列表
+ */
+export const getBelongFileType = (absoluteFilePath: string, extMap: ExtMap) => {
+    const extName = Path.extname(absoluteFilePath)
+
+    for (const [fileType, extArray] of Array.from(extMap.entries())) {
+        if (extArray.includes(extName)) {
+            return fileType
+        }
+    }
+
+    return undefined
 }
