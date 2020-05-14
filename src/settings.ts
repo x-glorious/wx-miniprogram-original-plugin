@@ -23,5 +23,7 @@ export default {
     /**
      * 插件文件所在目录
      */
-    pluginDir: PLUGIN_DIR
+    pluginDir: PLUGIN_DIR,
+
+    appLevelAdditionJsonFiles: ['project.config.json', 'sitemap.json']
 }

@@ -15,11 +15,10 @@ interface IJson {
 
 /**
  * 获得前缀所对应的页面或者组件的4文件
- * @param prefixPath page components的文件前缀
- * @param additionalWxssSuffixArray wxss可能会使用额外的文件后缀
+ * @param prefixPath page components的文件前缀,绝对路径前缀
+ * @param extArray 搜索后缀列表
  */
-const getPageOrComponentFiles = (prefixPath: string, additionalWxssSuffixArray: string[]) => {
-    const { extArray } = getSearchExtInfo(additionalWxssSuffixArray)
+export const getPageOrComponentFiles = (prefixPath: string, extArray: string[][]) => {
     const filePathArray = []
 
     for (const oneFileTypeArray of extArray) {
@@ -32,8 +31,8 @@ const getPageOrComponentFiles = (prefixPath: string, additionalWxssSuffixArray: 
         }
     }
 
-    // 4文件不全，则报错
-    if (filePathArray.length !== 4) {
+    // 所属文件类型不全，则报错
+    if (filePathArray.length !== extArray.length) {
         throw new Error(`Page or components file structure incomplete`)
     }
 
@@ -51,7 +50,7 @@ const analyzer: FileAnalyzer = (
     additionalDependencies
 ) => {
     const dependencies = new Set<string>(additionalDependencies ? additionalDependencies : [])
-
+    const { extArray } = getSearchExtInfo(options.additionalWxssSuffixArray)
     const content = Fs.readFileSync(fileAbsolutePath).toString()
     const jsonObj = JSON.parse(content) as IJson
     const { pages, usingComponents } = jsonObj
@@ -77,10 +76,7 @@ const analyzer: FileAnalyzer = (
             item,
             webpackSystemInfo.srcDir
         )
-        const filePathArray = getPageOrComponentFiles(
-            prefixAbsolutePath,
-            options.additionalWxssSuffixArray
-        )
+        const filePathArray = getPageOrComponentFiles(prefixAbsolutePath, extArray)
         filePathArray.forEach((filePath) => dependencies.add(filePath))
     })
 

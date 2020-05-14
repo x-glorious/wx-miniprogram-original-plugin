@@ -1,5 +1,8 @@
 // logs.ts
 // const util = require('../../utils/util.js')
+/**
+ * 666
+ */
 import { formatTime } from '@/utils/util'
 
 Page({

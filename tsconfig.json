@@ -3,7 +3,7 @@
         "strictNullChecks": true,
         "noImplicitAny": true,
         "module": "CommonJS",
-        "target": "ES5",
+        "target": "ES6",
         "allowJs": false,
         "experimentalDecorators": true,
         "noImplicitThis": true,
@@ -19,7 +19,7 @@
         "pretty": true,
         "strictPropertyInitialization": true,
         "esModuleInterop": true,
-        "lib": ["es5"],
+        // "lib": ["es5"],
         "declaration": true,
         "outDir": "./dist",
         "sourceMap": false

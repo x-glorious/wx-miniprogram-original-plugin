@@ -39,7 +39,8 @@ const wxAppJsonPluginObj = new WxAppJsonPlugin({
 })
 
 const wxMiniProgramOriginalPlugin = new WxMiniProgramOriginalPlugin({
-    outputDir: outputDir
+    outputDir: outputDir,
+    additionalWxssSuffixArray: ['scss']
 })
 
 const relativeFileLoader = (ext = '[ext]') => {
@@ -54,10 +55,10 @@ const relativeFileLoader = (ext = '[ext]') => {
 }
 
 module.exports = {
-    entry: wxAppJsonPluginObj.getEntry(),
-    // entry: wxMiniProgramOriginalPlugin.getEntry(),
+    // entry: wxAppJsonPluginObj.getEntry(),
+    entry: wxMiniProgramOriginalPlugin.getEntry(),
     context: srcDir,
-    // output: wxMiniProgramOriginalPlugin.getOutput(),
+    output: wxMiniProgramOriginalPlugin.getOutput(),
     output: {
         path: outputDir,
         filename: '[name].js'
@@ -129,8 +130,8 @@ module.exports = {
             // default is true
             clearConsole: true
         }),
-        wxAppJsonPluginObj,
-        // wxMiniProgramOriginalPlugin,
+        // wxAppJsonPluginObj,
+        wxMiniProgramOriginalPlugin,
         new CleanWebpackPlugin()
     ],
     stats: 'errors-only'

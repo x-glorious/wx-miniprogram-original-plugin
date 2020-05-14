@@ -2,7 +2,8 @@ import { Compiler } from 'webpack'
 import Path from 'path'
 import Fs from 'fs'
 import Settings from './settings'
-import { IAliasInfo, IWebpackSystemInfo, FileTypeEnum, ExtMap } from './index'
+import { IAliasInfo, IWebpackSystemInfo, FileTypeEnum, ExtMap, IExtInfo, IFileInfo } from './index'
+import { getPageOrComponentFiles } from './analyzer/json'
 
 /**
  * 获取webpack 系统信息
@@ -95,13 +96,14 @@ export const makeEnvironment = () => {
  * @param aliasInfos 别名信息
  */
 export const transformImportPathToRealPath = (importFilePath: string, aliasInfos: IAliasInfo[]) => {
-    let result = importFilePath
+    let result: string | undefined = undefined
 
-    aliasInfos.forEach(({ symbolString, path }) => {
-        if (result.includes(symbolString)) {
-            result = Path.resolve(path, result.replace(symbolString, '.'))
+    for (const { symbolString, path } of aliasInfos) {
+        if (importFilePath.includes(symbolString)) {
+            result = Path.resolve(path, importFilePath.replace(symbolString, '.'))
+            break
         }
-    })
+    }
 
     return result
 }
@@ -150,7 +152,7 @@ export const transformRootOrRelativeToRealPath = (
  * 获取搜索后缀地图
  * @param additionalWxssSuffixArray 额外的wxss文件后缀
  */
-export const getSearchExtInfo = (additionalWxssSuffixArray: string[]) => {
+export const getSearchExtInfo = (additionalWxssSuffixArray: string[]): IExtInfo => {
     const jsArray = ['js', 'ts']
     const jsonArray = ['json']
     const wxmlArray = ['wxml']
@@ -176,11 +178,136 @@ export const getSearchExtInfo = (additionalWxssSuffixArray: string[]) => {
  * @returns undefined 代表文件类型不在已知列表
  */
 export const getBelongFileType = (absoluteFilePath: string, extMap: ExtMap) => {
-    const extName = Path.extname(absoluteFilePath)
+    const extName = Path.extname(absoluteFilePath).replace('.', '')
 
     for (const [fileType, extArray] of Array.from(extMap.entries())) {
         if (extArray.includes(extName)) {
             return fileType
+        }
+    }
+
+    return undefined
+}
+
+/**
+ * 获得app json文件的额外依赖
+ * @param extMap 搜索后缀地图
+ * @param srcDir src dir
+ */
+export const getAppJsonAdditionalDependencies = (extMap: ExtMap, srcDir: string) => {
+    const { appLevelAdditionJsonFiles } = Settings
+    // APP 级别页面文件不存在 wxml
+    const appPageFileTypes = [FileTypeEnum.WXSS, FileTypeEnum.JSON, FileTypeEnum.JS]
+    const appPageFiles = getPageOrComponentFiles(
+        Path.resolve(srcDir, 'app'),
+        appPageFileTypes.map((filetype) => extMap.get(filetype)!)
+    )
+    const appLevelJsonFiles = appLevelAdditionJsonFiles.map((jsonFile) =>
+        Path.resolve(srcDir, jsonFile)
+    )
+    return new Set([...appPageFiles, ...appLevelJsonFiles])
+}
+
+/**
+ * 获取 fake import 所需的信息
+ * @param dependencyMap 依赖地图，里面所有 key 对应的文件都需要存在
+ * @param appJsonFilePath app json文件地址
+ */
+export const getFakeImportInfos = (
+    dependencyMap: Map<string, IFileInfo>,
+    appJsonFilePath: string
+) => {
+    const dependedByCounterMap = new Map<string, number>()
+    const importPathSet = new Set<string>()
+    const importFileAbsoluteSet = new Set<string>()
+    const notImportedByOtherSet = new Set<string>()
+
+    const sureExistInCounterMap = (filePath: string) => {
+        // app.json 没有人引用他，但是我们需要它，故而默认为1
+        const defaultValue = filePath === appJsonFilePath ? 1 : 0
+        if (!dependedByCounterMap.has(filePath)) {
+            dependedByCounterMap.set(filePath, defaultValue)
+        }
+    }
+
+    for (const [keyString, fileInfo] of Array.from(dependencyMap.entries())) {
+        const { dependencies } = fileInfo
+        // 确保在被引用计数器地图中存在
+        sureExistInCounterMap(keyString)
+
+        if (dependencies) {
+            dependencies.forEach((item: string) => {
+                sureExistInCounterMap(item)
+                const nowCounter = dependedByCounterMap.get(item)!
+                dependedByCounterMap.set(item, nowCounter + 1)
+            })
+        }
+    }
+
+    for (const [absolutePath, counter] of Array.from(dependedByCounterMap.entries())) {
+        const { importPath } = dependencyMap.get(absolutePath)!
+        // 有引用的文件则 fake import
+        if (counter > 0) {
+            importPathSet.add(importPath)
+            importFileAbsoluteSet.add(absolutePath)
+        }
+        // 如果没有引用
+        else {
+            notImportedByOtherSet.add(absolutePath)
+        }
+    }
+
+    return {
+        importPathSet,
+        importFileAbsoluteSet,
+        notImportedByOtherSet
+    }
+}
+
+/**
+ * 更新 fake content
+ * @param importPathSet import path set (require 里面需要用到的)
+ */
+export const updateFakeContent = (importPathSet: Set<string>) => {
+    const { fakerImporterPath } = Settings
+
+    const fileContent = Array.from(importPathSet)
+        .map((item, index) => {
+            // 对 win 的路径做一个兼容
+            const forWinCompatibility = item.replace(/\\/g, '/')
+            const requireString = `const file_${index} = require('${forWinCompatibility}');`
+            const somethingForCheck = `let fake_${index} = file_${index};fake_${index}=()=>{};fake_${index}();`
+
+            return requireString + '\n' + somethingForCheck + '\n'
+        })
+        .join('')
+
+    Fs.writeFileSync(fakerImporterPath, fileContent, {
+        flag: 'w'
+    })
+}
+
+/**
+ * 获取 json 文件在 asset 里面的信息
+ * @param fileAbsolutePath json绝对路径
+ * @param srcDir 根目录
+ */
+export const getJsonAssetInfo = (fileAbsolutePath: string, srcDir: string) => {
+    if (Fs.existsSync(fileAbsolutePath)) {
+        const content = Fs.readFileSync(fileAbsolutePath).toString()
+        const keyString = Path.relative(srcDir, fileAbsolutePath)
+
+        return {
+            keyString,
+            value: {
+                source: () => {
+                    return content
+                },
+
+                size: () => {
+                    return content.length
+                }
+            }
         }
     }
 
