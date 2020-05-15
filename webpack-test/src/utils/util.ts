@@ -1,6 +1,6 @@
 import { testString } from '@/utils/test'
 
-console.log(testString)
+console.log(testString + '666')
 export const formatTime = (date: Date) => {
     const year = date.getFullYear()
     const month = date.getMonth() + 1

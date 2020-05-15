@@ -1,3 +1,4 @@
+<include src="/test/test.wxml" />
 <!--logs.wxml-->
 <view class="container log-list">
   <block wx:for="{{logs}}" wx:for-item="log">
