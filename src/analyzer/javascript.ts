@@ -17,15 +17,12 @@ const analyzer: FileAnalyzer = (
 ) => {
     const importRegex = /import\s+[^'"]+\s+from\s+(?:'|")([^\s'"]+?)(?:'|")/g
     const requireRegex = /require\((?:'|")([^\s'"]+?)(?:'|")/g
-    const starCommentRegex = /\/\*(.|\n)*?\*\//g
-    const lineCommentRegex = /\/\/.*?\n/g
+    const starCommentRegex = /\/\*(.|[^.])*?\*\//g
+    const lineCommentRegex = /\/\/.*[^.]/g
 
     const dependencies = new Set<string>(additionalDependencies ? additionalDependencies : [])
-
     const content = Fs.readFileSync(fileAbsolutePath).toString()
 
-    // const test = content.replace(/\/\/.*?\n/g, '')
-    // console.log(test)
     // 去除所有js注释，得到真正的内容
     const realContent = content.replace(starCommentRegex, '').replace(lineCommentRegex, '')
 
