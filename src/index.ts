@@ -1,3 +1,6 @@
+/**
+ * 为何！assest中有了，为什么不输出到目录下面
+ */
 import { Compiler, compilation } from 'webpack'
 import Path from 'path'
 import Fs from 'fs'
@@ -12,7 +15,8 @@ import {
     getAppJsonAdditionalDependencies,
     getFakeImportInfos,
     updateFakeContent,
-    getJsonAssetInfo
+    getJsonAssetInfo,
+    refreshAFile
 } from './tools'
 import JavaScriptAnalyzer from './analyzer/javascript'
 import JsonAnalyzer from './analyzer/json'
@@ -214,6 +218,16 @@ export class WxMiniProgramOriginalPlugin {
 
         // 更新 fake 内容
         updateFakeContent(importPathSet)
+
+        // FIXME: 可能由于webpack缓存的原因，当一个文件被引入，然后不引入，再次引入的时候
+        // webpack 不会将其重新输出，除非手动保存一次或者修改
+        // 故而在此对于新文件重写刷新
+        // 此处做法过于丑陋，后续仍需改进，了解其内在原因
+        importFileAbsoluteSet.forEach((newImport) => {
+            if (!this.importFilePathCache.has(newImport)) {
+                refreshAFile(newImport)
+            }
+        })
         // 更新 导入文件文件绝对路径缓存
         this.importFilePathCache = importFileAbsoluteSet
         // 没有被任何人引用的 key 需要删除

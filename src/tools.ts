@@ -209,6 +209,18 @@ export const getAppJsonAdditionalDependencies = (extMap: ExtMap, srcDir: string)
 }
 
 /**
+ * 刷新一个文件
+ * @param fileAbsolutePath 文件绝对路径
+ */
+export const refreshAFile = (fileAbsolutePath: string) => {
+    const content = Fs.readFileSync(fileAbsolutePath)
+    // 重写
+    Fs.writeFileSync(fileAbsolutePath, content, {
+        flag: 'w'
+    })
+}
+
+/**
  * 获取 fake import 所需的信息
  * @param dependencyMap 依赖地图，里面所有 key 对应的文件都需要存在
  * @param appJsonFilePath app json文件地址
