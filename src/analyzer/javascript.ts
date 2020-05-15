@@ -1,10 +1,35 @@
 import Fs from 'fs'
+import Path from 'path'
 import {
     transformImportPathToRealPath,
     getFakerImportRelativePath,
-    transformRootOrRelativeToRealPath
+    transformRootOrRelativeToRealPath,
+    getSearchExtInfo
 } from '../tools'
-import { FileAnalyzer } from '../index'
+import { FileAnalyzer, FileTypeEnum } from '../index'
+
+const getRealFilePathWithExt = (searchExtArray: string[], disposeAbsolutePath: string) => {
+    const nowExt = Path.extname(disposeAbsolutePath)
+    let result = ''
+    // 已存在后缀，则无需再次处理
+    if (nowExt) {
+        return disposeAbsolutePath
+    }
+
+    for (const ext of searchExtArray) {
+        const filePath = `${disposeAbsolutePath}.${ext}`
+        if (Fs.existsSync(filePath)) {
+            result = filePath
+            break
+        }
+    }
+
+    if (!result) {
+        throw new Error(`File ${disposeAbsolutePath} not exist`)
+    }
+
+    return result
+}
 
 /**
  * javascript文件分析器
@@ -20,6 +45,7 @@ const analyzer: FileAnalyzer = (
     const starCommentRegex = /\/\*(.|[^.])*?\*\//g
     const lineCommentRegex = /\/\/.*[^.]/g
 
+    const { extMap } = getSearchExtInfo(options.additionalWxssSuffixArray)
     const dependencies = new Set<string>(additionalDependencies ? additionalDependencies : [])
     const content = Fs.readFileSync(fileAbsolutePath).toString()
 
@@ -33,7 +59,7 @@ const analyzer: FileAnalyzer = (
             const absolutePath =
                 transformImportPathToRealPath(temp, webpackSystemInfo.aliasInfos) ||
                 transformRootOrRelativeToRealPath(fileAbsolutePath, temp, webpackSystemInfo.srcDir)
-            dependencies.add(absolutePath)
+            dependencies.add(getRealFilePathWithExt(extMap.get(FileTypeEnum.JS)!, absolutePath))
         }
     }
     getImportDel(importRegex)
