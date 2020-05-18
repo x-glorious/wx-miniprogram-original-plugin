@@ -313,3 +313,18 @@ export class WxMiniProgramOriginalPlugin {
         )
     }
 }
+
+/**
+ * 相对文件loader生成函数
+ * @param srcDir 微信小程序根目录
+ */
+export const relativeFileLoaderFac = (srcDir: string) => (ext = '[ext]') => {
+    return {
+        loader: 'file-loader',
+        options: {
+            useRelativePath: true,
+            name: `[path][name].${ext}`,
+            context: srcDir
+        }
+    }
+}

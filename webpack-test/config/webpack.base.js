@@ -3,7 +3,7 @@ const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
-const { WxMiniProgramOriginalPlugin } = require('../dist/index')
+const { WxMiniProgramOriginalPlugin, relativeFileLoaderFac } = require('../dist/index')
 
 const srcDir = path.resolve(__dirname, `../src`)
 const outputDir = path.resolve(__dirname, `../output`)
@@ -12,17 +12,7 @@ const wxMiniProgramOriginalPlugin = new WxMiniProgramOriginalPlugin({
     outputDir: outputDir,
     additionalWxssSuffixArray: ['scss']
 })
-
-const relativeFileLoader = (ext = '[ext]') => {
-    return {
-        loader: 'file-loader',
-        options: {
-            useRelativePath: true,
-            name: `[path][name].${ext}`,
-            context: srcDir
-        }
-    }
-}
+const relativeFileLoader = relativeFileLoaderFac(srcDir)
 
 module.exports = {
     entry: wxMiniProgramOriginalPlugin.getEntry(),
