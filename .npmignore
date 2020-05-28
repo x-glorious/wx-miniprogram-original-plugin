@@ -1,2 +1,4 @@
 webpack-test/
 src/
+.vscode/
+node_modules/
