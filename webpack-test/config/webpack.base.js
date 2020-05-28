@@ -18,10 +18,6 @@ module.exports = {
     entry: wxMiniProgramOriginalPlugin.getEntry(),
     context: srcDir,
     output: wxMiniProgramOriginalPlugin.getOutput(),
-    output: {
-        path: outputDir,
-        filename: '[name].js'
-    },
     resolve: {
         extensions: ['.js', '.ts'],
         // 所有的三方模块
