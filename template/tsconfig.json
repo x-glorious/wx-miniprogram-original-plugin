@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        // 在设定了 baseUrl 之后，用来 限定如何解析 路径
+        "paths": {
+            "@/*": ["./src/*"]
+        },
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "module": "CommonJS",
+        "target": "ES5",
+        "allowJs": false,
+        "experimentalDecorators": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "alwaysStrict": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
+        "removeComments": true,
+        "pretty": true,
+        "strictPropertyInitialization": true,
+        "esModuleInterop": true,
+        "lib": ["es5"],
+        "typeRoots": ["./node_modules/miniprogram-api-typings/types"]
+    },
+    "include": ["./src/**/*.ts"],
+    "exclude": ["./node_modules"]
+}

@@ -1,0 +1,38 @@
+{
+    "description": "项目配置文件",
+    "packOptions": {
+        "ignore": [
+            {
+                "type": "folder",
+                "value": "rubbish"
+            }
+        ]
+    },
+    "compileType": "miniprogram",
+    "libVersion": "2.8.2",
+    "projectname": "Wx Miniprogram Template",
+    "setting": {
+        "urlCheck": true,
+        "es6": true,
+        "postcss": true,
+        "minified": true,
+        "newFeature": true,
+        "coverView": true,
+        "nodeModules": false,
+        "autoAudits": false,
+        "showShadowRootInWxmlPanel": true,
+        "scopeDataCheck": false,
+        "checkInvalidKey": true,
+        "checkSiteMap": true,
+        "uploadWithSourceMap": true,
+        "babelSetting": {
+            "ignore": [],
+            "disablePlugins": [],
+            "outputPath": ""
+        }
+    },
+    "simulatorType": "wechat",
+    "simulatorPluginLibVersion": {},
+    "appid": "wxfe248558f6cdb45f",
+    "condition": {}
+}
