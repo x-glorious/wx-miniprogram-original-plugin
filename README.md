@@ -1,6 +1,6 @@
 # Wx-miniprogram original framework webpack plugin
 
-### First of all
+## First of all
 
 To be honest, this package seemed more like **a helper package** than **a webpack plugin**
 
@@ -10,7 +10,7 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 
 
-### Feature
+## Feature
 
 - Add the wx miniprogram code to the control of webpack
 - Support the **typescript** file（Support alias path）
@@ -27,7 +27,7 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 
 
-### Use
+## Use
 
 **Plugin constructor**
 
@@ -45,7 +45,7 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 
 
-### Tooltips
+## Tooltips
 
 - Webpack context option **must** be set to your root dir（which contain `app.json`）
 - In **every rules**, the last of use please use `relativeFileLoader`, you just give only one param（the target file **extname**）
@@ -53,7 +53,7 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 
 
-### Webpack config template
+## Webpack config template
 
 ```js
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
@@ -153,7 +153,7 @@ module.exports = {
 
 
 
-### Real project
+## Real project
 
 You can find the real project template in mine github test project
 
