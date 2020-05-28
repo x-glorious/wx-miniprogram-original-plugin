@@ -27,6 +27,31 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 
 
+### Use
+
+**Plugin constructor**
+
+- `additionalWxssSuffixArray`  **string[]** additional wxss suffix, like `scss` (optional)
+- `outputDir` **string** the absolute path of the output target dir
+
+
+
+**Provide api**
+
+- `getEntry` get the webpack **entry** option
+- `output` get the webpack **output** option 
+
+> Ps : please do not set those two options **manual**
+
+
+
+### Tooltips
+
+- Webpack context option **must** be set to your root dir（which contain `app.json`）
+- In **every rules**, the last of use please use `relativeFileLoader`, you just give only one param（the target file **extname**）
+
+
+
 ### Webpack config template
 
 ```js
@@ -124,8 +149,6 @@ module.exports = {
 }
 
 ```
-
-> Ps : in **every rules**, the last of use please use `relativeFileLoader`, you just give only one param（the target file extname）
 
 
 
