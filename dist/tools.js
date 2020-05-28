@@ -216,9 +216,13 @@ exports.getFakeImportInfos = (dependencyMap, appJsonFilePath) => {
         }
     }
     for (const [absolutePath, counter] of Array.from(dependedByCounterMap.entries())) {
-        const { importPath } = dependencyMap.get(absolutePath);
+        const { importPath } = dependencyMap.get(absolutePath) || { importPath: '' };
         // 有引用的文件则 fake import
         if (counter > 0) {
+            // 如果在依赖表中找不到信息，则代表这个文件不存在了
+            if (!importPath) {
+                throw new Error(`File ${absolutePath} not exist`);
+            }
             importPathSet.add(importPath);
             importFileAbsoluteSet.add(absolutePath);
         }

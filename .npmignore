@@ -2,3 +2,7 @@ webpack-test/
 src/
 .vscode/
 node_modules/
+.eslintrc.js
+commitlint.config.js
+prettier.config.js
+tsconfig.json

@@ -1,6 +1,6 @@
 {
     "name": "wx-miniprogram-original-webpack-plugin",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "A webpack plugin for wx orginal miniporgram framework",
     "main": "./dist/index.js",
     "scripts": {
