@@ -49,6 +49,7 @@ This package is work in the wx miniprogram **original framework**（not use the 
 
 - Webpack context option **must** be set to your root dir（which contain `app.json`）
 - In **every rules**, the last of use please use `relativeFileLoader`, you just give only one param（the target file **extname**）
+- In the init part, **all files** which is "**imported**" should be in the **file system**, otherwise, the system will throw a error, like `Error: File /Users/XXX/src/test/test.wxml not exist`，in this situation, you should **delete the lost file's import** and restart the webpack
 
 
 
