@@ -10,7 +10,7 @@
     "license": "ISC",
     "dependencies": {
         "@babel/runtime": "^7.8.4",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.21",
         "miniprogram-api-typings": "^2.10.1-1",
         "webpack-merge": "^4.2.2"
     },
